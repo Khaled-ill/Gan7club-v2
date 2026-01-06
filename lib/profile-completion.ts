@@ -40,12 +40,33 @@ export function calculateProfileCompletion(profile: ProfileData | null | undefin
     };
   }
 
+  // Basic Info (20%) - name, birthdate, nationality, city, country
+  const basicInfoComplete = !!(
+    profile.fullName &&
+    (profile as any).birthdate &&
+    (profile as any).nationality &&
+    profile.city &&
+    profile.country
+  );
+
+  // Categories (20%) - at least one category
+  const categoriesComplete = !!(profile.categories && profile.categories.length > 0);
+
+  // Attributes (20%) - at least one attribute block filled
+  const attributesComplete = hasAnyAttributeBlock(profile.attributes);
+
+  // Media (20%) - at least one media item
+  const mediaComplete = !!(profile.media && profile.media.length > 0);
+
+  // Bio (20%) - bio text written (at least 50 characters)
+  const bioComplete = !!(profile.bio && profile.bio.trim().length > 50);
+
   const checklist: CompletionChecklist = {
-    basicInfo: !!(profile.fullName && profile.city && profile.country),
-    categories: !!(profile.categories && profile.categories.length > 0),
-    attributes: hasAnyAttribute(profile.attributes),
-    media: !!(profile.media && profile.media.length > 0),
-    bio: !!(profile.bio && profile.bio.trim().length > 0),
+    basicInfo: basicInfoComplete,
+    categories: categoriesComplete,
+    attributes: attributesComplete,
+    media: mediaComplete,
+    bio: bioComplete,
   };
 
   let percentage = 0;
@@ -56,6 +77,39 @@ export function calculateProfileCompletion(profile: ProfileData | null | undefin
   if (checklist.bio) percentage += 20;
 
   return { percentage, checklist };
+}
+
+function hasAnyAttributeBlock(attributes: ProfileData['attributes']): boolean {
+  if (!attributes) return false;
+
+  // Physical Block
+  const hasPhysical =
+    attributes.heightCm != null ||
+    attributes.weightKg != null ||
+    (attributes as any).hairColor != null ||
+    (attributes as any).eyeColor != null ||
+    (attributes as any).skinTone != null;
+
+  // Skills Block
+  const hasSkills =
+    (attributes.danceStyles != null && attributes.danceStyles.length > 0) ||
+    ((attributes as any).martialArts != null && (attributes as any).martialArts.length > 0) ||
+    ((attributes as any).accents != null && (attributes as any).accents.length > 0) ||
+    ((attributes as any).licenses != null && (attributes as any).licenses.length > 0);
+
+  // Technical Block
+  const hasTechnical =
+    ((attributes as any).equipmentList != null && (attributes as any).equipmentList.length > 0) ||
+    ((attributes as any).softwareList != null && (attributes as any).softwareList.length > 0) ||
+    (attributes as any).studioAvailable != null;
+
+  // Performance Block
+  const hasPerformance =
+    (attributes as any).vocalRange != null ||
+    ((attributes as any).actingMethods != null && (attributes as any).actingMethods.length > 0) ||
+    (attributes as any).experienceLevel != null;
+
+  return hasPhysical || hasSkills || hasTechnical || hasPerformance;
 }
 
 function hasAnyAttribute(attributes: ProfileData['attributes']): boolean {

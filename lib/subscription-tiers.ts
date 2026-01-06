@@ -1,85 +1,87 @@
-// Subscription tier information and benefits
-
-export type SubscriptionTier = 'FREE' | 'SILVER' | 'PLATINUM';
-
-export interface TierBenefits {
-  gallerySlots: number | 'unlimited';
-  videoReels?: number;
-  searchBoost?: string;
-  verifiedBadge: boolean;
-  canCreateTroupes: boolean | number;
-  featuredStatus?: boolean;
-  zCardGenerator?: boolean;
-  priorityShortlist?: boolean;
-}
+// Subscription tier utilities
 
 export interface TierInfo {
-  name: SubscriptionTier;
+  name: string;
   displayName: string;
   color: string;
   bgColor: string;
   borderColor: string;
-  benefits: TierBenefits;
-  upgradeMessage?: string;
-  canUpgrade: boolean;
-  nextTier?: SubscriptionTier;
+  benefits: string[];
+  mediaLimits: {
+    images: number;
+    videos: number;
+  };
+  groupLimit: number;
 }
 
-export const subscriptionTiers: Record<SubscriptionTier, TierInfo> = {
-  FREE: {
-    name: 'FREE',
-    displayName: 'Free Plan',
-    color: 'text-gray-400',
-    bgColor: 'bg-gray-800',
-    borderColor: 'border-gray-700',
-    benefits: {
-      gallerySlots: 2,
-      verifiedBadge: false,
-      canCreateTroupes: false,
-    },
-    upgradeMessage: 'Upgrade to SILVER for more features',
-    canUpgrade: true,
-    nextTier: 'SILVER',
-  },
-  SILVER: {
-    name: 'SILVER',
-    displayName: 'Silver Plan',
-    color: 'text-gray-300',
-    bgColor: 'bg-gray-700',
-    borderColor: 'border-gray-600',
-    benefits: {
-      gallerySlots: 10,
-      videoReels: 2,
-      searchBoost: 'Top 20%',
-      verifiedBadge: true,
-      canCreateTroupes: 1,
-    },
-    upgradeMessage: 'Upgrade to PLATINUM for unlimited features',
-    canUpgrade: true,
-    nextTier: 'PLATINUM',
-  },
-  PLATINUM: {
-    name: 'PLATINUM',
-    displayName: 'Platinum Plan',
-    color: 'text-yellow-400',
-    bgColor: 'bg-yellow-900/20',
-    borderColor: 'border-yellow-700',
-    benefits: {
-      gallerySlots: 'unlimited',
-      videoReels: 'unlimited',
-      searchBoost: 'Top 5%',
-      verifiedBadge: true,
-      canCreateTroupes: true,
-      featuredStatus: true,
-      zCardGenerator: true,
-      priorityShortlist: true,
-    },
-    upgradeMessage: 'You have all features!',
-    canUpgrade: false,
-  },
-};
+export function getTierInfo(tier: string): TierInfo {
+  const normalizedTier = tier?.toUpperCase() || 'FREE';
 
-export function getTierInfo(tier: SubscriptionTier | null | undefined): TierInfo {
-  return subscriptionTiers[tier || 'FREE'];
+  switch (normalizedTier) {
+    case 'PLATINUM':
+      return {
+        name: 'PLATINUM',
+        displayName: 'Platinum',
+        color: 'text-amber-600',
+        bgColor: 'bg-amber-50',
+        borderColor: 'border-amber-200',
+        benefits: [
+          'Unlimited media (images & videos)',
+          'Featured Status (Always in Top 5 search results)',
+          'Z-Card Generator (Professional PDF)',
+          'Priority Shortlist (Auto-suggested to admins)',
+          'Unlimited Groups/Troupes',
+        ],
+        mediaLimits: {
+          images: Infinity,
+          videos: Infinity,
+        },
+        groupLimit: Infinity,
+      };
+    case 'SILVER':
+      return {
+        name: 'SILVER',
+        displayName: 'Silver',
+        color: 'text-gray-600',
+        bgColor: 'bg-gray-50',
+        borderColor: 'border-gray-200',
+        benefits: [
+          '10 gallery slots',
+          '2 video reels',
+          'Search Boost (Top 20% visibility)',
+          'Verified Badge',
+          'Create 1 Group/Troupe',
+        ],
+        mediaLimits: {
+          images: 10,
+          videos: 2,
+        },
+        groupLimit: 1,
+      };
+    default: // FREE
+      return {
+        name: 'FREE',
+        displayName: 'Free',
+        color: 'text-blue-600',
+        bgColor: 'bg-blue-50',
+        borderColor: 'border-blue-200',
+        benefits: [
+          '2 gallery slots',
+          'Discoverable in search',
+        ],
+        mediaLimits: {
+          images: 2,
+          videos: 0,
+        },
+        groupLimit: 0,
+      };
+  }
 }
 
+export function getMediaLimits(subscriptionTier: string): { images: number; videos: number } {
+  return getTierInfo(subscriptionTier).mediaLimits;
+}
+
+export function getGroupLimit(subscriptionTier: string): number {
+  return getTierInfo(subscriptionTier).groupLimit;
+}

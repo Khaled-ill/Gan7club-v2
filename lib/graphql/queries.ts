@@ -21,6 +21,7 @@ export const LOGIN_MUTATION = gql`
         id
         email
         username
+        role
       }
     }
   }
@@ -36,13 +37,20 @@ export const REGISTER_MUTATION = gql`
         id
         email
         username
+        role
       }
       profile {
         id
         fullName
-        entityType
+        birthdate
         subscriptionTier
+        city
+        country
         categories {
+          code
+          name
+        }
+        primaryCategory {
           code
           name
         }
@@ -52,41 +60,146 @@ export const REGISTER_MUTATION = gql`
 `;
 
 export const GET_DASHBOARD_DATA = gql`
-  query GetDashboardData {
+  query GetTalentDashboard {
     me {
       id
       email
       username
+      role
+      isActive
     }
     myProfile {
       id
       fullName
-      entityType
-      subscriptionTier
-      isVerified
-      bio
+      birthdate
+      nationality
+      languages
       city
       country
+      bio
+      subscriptionTier
+      isVerified
+      isFeatured
+      isActive
+      createdAt
+      updatedAt
+      
+      # Categories
       categories {
+        id
         code
         name
+        mainCategory {
+          id
+          code
+          name
+        }
       }
       primaryCategory {
+        id
         code
         name
       }
+      profileCategories {
+        id
+        isPrimary
+        experienceYears
+        category {
+          code
+          name
+        }
+      }
+      
+      # Media Gallery
       media {
         id
-        file
         mediaType
+        title
+        description
+        file
+        thumbnail
+        thumbnailMedium
         isPrimary
         order
       }
+      
+      # Attributes
       attributes {
+        id
+        # Physical Block
         heightCm
         weightKg
+        hairColor
+        eyeColor
+        skinTone
+        bodyMarks
+        # Skills Block
         danceStyles
+        martialArts
+        accents
+        licenses
+        # Technical Block
+        equipmentList
+        softwareList
+        studioAvailable
+        # Performance Block
+        vocalRange
+        actingMethods
+        experienceLevel
       }
+      
+      # Video Introduction
+      introVideoUrl
+      introVideoThumbnailUrl
+      introVideoDuration
+      
+      # Group Participation
+      isGroupLeader
+      isGroupMember
+      ownedGroupsCount
+      memberGroupsCount
+    }
+  }
+`;
+
+export const GET_MY_GROUPS = gql`
+  query MyGroups {
+    myGroups {
+      id
+      name
+      description
+      category {
+        code
+        name
+      }
+      numberOfMembers
+      members {
+        id
+        fullName
+      }
+      leader {
+        id
+        email
+      }
+    }
+  }
+`;
+
+export const GET_MY_SELF_TAPES = gql`
+  query MySelfTapes {
+    mySelfTapes {
+      id
+      project {
+        id
+        name
+      }
+      status
+      submittedAt
+      videoUrl
+      videoThumbnailUrl
+      videoDuration
+      notes
+      adminNotes
     }
   }
 `;

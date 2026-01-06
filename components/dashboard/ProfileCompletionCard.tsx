@@ -16,7 +16,7 @@ export default function ProfileCompletionCard({
 
   const items = [
     {
-      label: 'Basic Info (Name, Location)',
+      label: 'Basic Info (Name, Birthdate, Nationality, Location)',
       completed: checklist.basicInfo,
       link: '/profile/edit',
     },
@@ -26,7 +26,7 @@ export default function ProfileCompletionCard({
       link: '/profile/categories',
     },
     {
-      label: 'Attributes (Physical/Skills)',
+      label: 'Attributes (Physical/Skills/Technical/Performance)',
       completed: checklist.attributes,
       link: '/profile/attributes',
     },

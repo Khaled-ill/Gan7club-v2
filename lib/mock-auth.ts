@@ -18,6 +18,7 @@ export interface MockLoginResponse {
     id: string;
     email: string;
     username: string;
+    role?: string;
   };
 }
 
@@ -49,12 +50,20 @@ export interface MockRegisterResponse {
 }
 
 // Mock user database
-const mockUsers: MockUser[] = [
+const mockUsers: (MockUser & { role?: string })[] = [
   {
     id: '1',
     email: 'user@example.com',
     username: 'user',
     password: 'ussr123',
+    role: 'USER',
+  },
+  {
+    id: '2',
+    email: 'admin@gan7club.com',
+    username: 'admin',
+    password: 'admin123',
+    role: 'ADMIN',
   },
 ];
 
@@ -97,6 +106,7 @@ export const mockLogin = async (
       id: user.id,
       email: user.email,
       username: user.username,
+      role: (user as any).role || 'USER',
     },
   };
 };
@@ -106,9 +116,7 @@ export const mockRegister = async (
   email: string,
   username: string,
   password: string,
-  fullName?: string,
-  entityType?: string,
-  categories?: string[]
+  fullName?: string
 ): Promise<MockRegisterResponse> => {
   // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 500));
@@ -145,12 +153,8 @@ export const mockRegister = async (
       fullName: fullName || null,
       firstName: fullName?.split(' ')[0] || null,
       lastName: fullName?.split(' ').slice(1).join(' ') || null,
-      entityType: entityType || 'individual',
       subscriptionTier: 'FREE',
-      categories: (categories || []).map((code) => ({
-        code,
-        name: code.charAt(0).toUpperCase() + code.slice(1),
-      })),
+      categories: [],
     },
   };
 };
